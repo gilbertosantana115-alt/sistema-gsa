@@ -231,10 +231,30 @@
     .password-eye:hover{background:rgba(244,196,0,.25);transform:translateY(-50%) scale(1.04);}
     .password-eye.senha-visivel{background:#f4c400;color:#000;}
 
+    /* AJUSTE EXTRA PARA PC, TABLET E CELULAR */
+    @media (min-width: 1201px){.main{max-width:calc(100% - 270px)}.box,.card,.topbar{border-radius:16px}}
+    @media (min-width: 851px) and (max-width: 1200px){.main{padding:18px}.sidebar{width:245px}.main{margin-left:245px;width:calc(100% - 245px)}table{min-width:860px}.grid-3{grid-template-columns:1fr 1fr}.backup-export-grid{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width: 850px){body{font-size:14px}.auth-card{padding:20px}.auth-brand h1{font-size:22px}.topbar h1{font-size:20px}table{min-width:760px}.table-responsive{overflow-x:auto;-webkit-overflow-scrolling:touch}.logo-actions{display:none}.sidebar{max-width:88vw}.main{padding-bottom:80px}}
+    @media (max-width: 520px){input,select,textarea{font-size:16px}.auth-screen{padding:12px}.auth-card{border-radius:14px}.auth-tabs{grid-template-columns:1fr}.dash-top-grid,.dash-mid-grid,.dash-main-grid,.cards{gap:12px}.box{padding:14px}.table-responsive table{font-size:12px}.menu-item{font-size:12px}}
+
   </style>
 </head>
 
 <body>
+  <!-- SUPABASE ONLINE: GitHub Pages hospeda o sistema e Supabase salva os dados do admin25/admin26 em nuvem. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /*
+      PROJECT URL DO SUPABASE JÁ CONFIGURADA.
+      Exemplo correto: https://xxxxxxxxxxxxxxxxxxxx.supabase.co
+
+      Você enviou a anon public key e ela já ficou preenchida abaixo.
+      Falta somente trocar COLE_AQUI_A_PROJECT_URL pela Project URL real.
+    */
+    window.GSA_SUPABASE_URL = "https://texplgignizkgivtxjfx.supabase.co";
+    window.GSA_SUPABASE_ANON_KEY = "sb_publishable_jNkRBvUk-A-oPKSqDhczpg_eekjcRDF";
+    window.GSA_SUPABASE_MASTER_EMAIL = "admin25@gsa.com";
+  </script>
   <script>
 
     /* SEGURANÇA / LOGIN COM DADOS SEPARADOS POR USUÁRIO */
@@ -246,7 +266,7 @@
       const SAVED_LOGIN_KEY="gsa_auth_saved_login_v1";
       const ACTIVE_USER_KEY="gsa_auth_active_user_v1";
       const AUTH_RESET_VERSION_KEY="gsa_auth_reset_version_v6";
-      const AUTH_RESET_VERSION_VALUE="senha-mestre-admin25-admin26-dados-globais-v1";
+      const AUTH_RESET_VERSION_VALUE="senha-mestre-admin25-admin26-dados-globais-v2";
       const originalGet=Storage.prototype.getItem;
       const originalSet=Storage.prototype.setItem;
       const originalRemove=Storage.prototype.removeItem;
@@ -255,6 +275,152 @@
       const MASTER_PASS="admin26";
       const DEFAULT_USER="admin";
       const DEFAULT_PASS="admin";
+
+      /* ================= SUPABASE ONLINE - ADMIN25/ADMIN26 =================
+         GitHub Pages: hospeda o HTML.
+         Supabase: salva os dados online para abrir igual no PC, celular e tablet.
+         Segurança: usa Supabase Auth + RLS. Não use service_role key neste arquivo.
+      */
+      const SUPABASE_URL=String(window.GSA_SUPABASE_URL||"").trim();
+      const SUPABASE_ANON_KEY=String(window.GSA_SUPABASE_ANON_KEY||"").trim();
+      const SUPABASE_MASTER_EMAIL=String(window.GSA_SUPABASE_MASTER_EMAIL||"admin25@gsa.com").trim();
+      const SUPABASE_TABELA="gsa_sistema";
+      const SUPABASE_PERFIL="principal";
+      let gsaSupabaseClient=null;
+      let gsaSupabaseUser=null;
+      let gsaSupabaseSyncTimer=null;
+      let gsaSupabaseCarregando=false;
+
+      function supabaseConfigurado(){
+        return !!(window.supabase && SUPABASE_ANON_KEY && /^https:\/\/.+\.supabase\.co\/?$/i.test(SUPABASE_URL));
+      }
+      function mensagemSupabaseNaoConfigurado(){
+        return "Supabase ainda não está configurado. No arquivo HTML, procure GSA_SUPABASE_URL e troque COLE_AQUI_A_PROJECT_URL pela Project URL real do Supabase. Exemplo: https://xxxx.supabase.co";
+      }
+      function obterSupabaseClient(){
+        if(!supabaseConfigurado())throw new Error(mensagemSupabaseNaoConfigurado());
+        if(!gsaSupabaseClient){
+          gsaSupabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{
+            auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+          });
+        }
+        return gsaSupabaseClient;
+      }
+      function coletarDadosMestreLocal(){
+        const raw={};
+        DATA_KEYS.forEach(k=>{
+          const valor=originalGet.call(localStorage,prefixoUsuario(MASTER_USER)+k);
+          if(valor!==null)raw[k]=valor;
+        });
+        return {
+          versao:"gsa-localStorage-v1",
+          tipo:"backup_online_supabase",
+          localStorage:raw,
+          atualizadoEm:new Date().toISOString()
+        };
+      }
+      function aplicarDadosSupabaseNoLocal(dados){
+        if(!dados||typeof dados!=="object")return;
+        const raw=dados.localStorage&&typeof dados.localStorage==="object"?dados.localStorage:null;
+        if(raw){
+          DATA_KEYS.forEach(k=>{
+            if(Object.prototype.hasOwnProperty.call(raw,k)){
+              originalSet.call(localStorage,prefixoUsuario(MASTER_USER)+k,String(raw[k]??""));
+            }
+          });
+          return;
+        }
+        // Compatibilidade com backups mais antigos, caso o Supabase receba dados em formato aberto.
+        const mapa={
+          clientes:"clientes_gsa",planos:"planos_gsa",apps:"apps_gsa",produtos:"produtos_gsa",contatos:"contatos_gsa",
+          pagamentos:"pagamentos_gsa",movimentacoes:"movimentacoes_gsa",config:"config_gsa",
+          mensagem:"mensagem_gsa",mensagemCobranca:"mensagem_gsa",mensagemRenovacao:"mensagem_renovacao_gsa",
+          logo:"logo_gsa",tituloLogo:"titulo_logo_gsa",limiteExibirClientes:"limite_exibir_clientes_gsa",
+          imagemCobranca:"imagem_cobranca_gsa",imagemCobrancaNome:"imagem_cobranca_nome_gsa",
+          imagemRenovacao:"imagem_renovacao_gsa",imagemRenovacaoNome:"imagem_renovacao_nome_gsa"
+        };
+        Object.keys(mapa).forEach(chave=>{
+          if(Object.prototype.hasOwnProperty.call(dados,chave)){
+            const k=mapa[chave];
+            const valor=dados[chave];
+            originalSet.call(localStorage,prefixoUsuario(MASTER_USER)+k,typeof valor==="string"?valor:JSON.stringify(valor));
+          }
+        });
+      }
+      async function salvarMestreNoSupabaseAgora(){
+        if(!ehUsuarioMestre(usuarioAtual()))return;
+        if(!supabaseConfigurado())return;
+        try{
+          const client=obterSupabaseClient();
+          const sess=await client.auth.getSession();
+          const user=(sess&&sess.data&&sess.data.session&&sess.data.session.user)||gsaSupabaseUser;
+          if(!user)return;
+          gsaSupabaseUser=user;
+          const dados=coletarDadosMestreLocal();
+          const payload={user_id:user.id,perfil:SUPABASE_PERFIL,dados,atualizado_em:new Date().toISOString()};
+          const {error}=await client.from(SUPABASE_TABELA).upsert(payload,{onConflict:"user_id,perfil"});
+          if(error)throw error;
+          originalSet.call(localStorage,"gsa_supabase_ultimo_sync",new Date().toISOString());
+        }catch(erro){
+          console.warn("Falha ao salvar no Supabase",erro);
+          originalSet.call(localStorage,"gsa_supabase_ultimo_erro",String(erro&&erro.message?erro.message:erro));
+        }
+      }
+      function agendarSyncSupabase(){
+        if(gsaSupabaseCarregando)return;
+        if(!ehUsuarioMestre(usuarioAtual()))return;
+        if(!supabaseConfigurado())return;
+        clearTimeout(gsaSupabaseSyncTimer);
+        gsaSupabaseSyncTimer=setTimeout(()=>salvarMestreNoSupabaseAgora(),900);
+      }
+      async function gsaSupabaseLoginECarregar(senha){
+        const client=obterSupabaseClient();
+        const {data:authData,error:authError}=await client.auth.signInWithPassword({
+          email:SUPABASE_MASTER_EMAIL,
+          password:senha
+        });
+        if(authError)throw new Error("Login Supabase falhou: "+authError.message+". Confirme se criou o usuário admin25@gsa.com com a senha admin26 no Supabase Authentication.");
+        gsaSupabaseUser=authData&&authData.user?authData.user:null;
+        if(!gsaSupabaseUser)throw new Error("Supabase não retornou o usuário autenticado.");
+
+        gsaSupabaseCarregando=true;
+        const {data:linha,error:selectError}=await client
+          .from(SUPABASE_TABELA)
+          .select("dados,atualizado_em")
+          .eq("user_id",gsaSupabaseUser.id)
+          .eq("perfil",SUPABASE_PERFIL)
+          .maybeSingle();
+        if(selectError)throw new Error("Erro ao ler dados online: "+selectError.message);
+
+        if(linha&&linha.dados){
+          aplicarDadosSupabaseNoLocal(linha.dados);
+        }else{
+          // Primeiro acesso: envia para a nuvem os dados que já existirem no aparelho atual.
+          const dados=coletarDadosMestreLocal();
+          const {error:upsertError}=await client.from(SUPABASE_TABELA).upsert({
+            user_id:gsaSupabaseUser.id,
+            perfil:SUPABASE_PERFIL,
+            dados,
+            atualizado_em:new Date().toISOString()
+          },{onConflict:"user_id,perfil"});
+          if(upsertError)throw new Error("Erro ao criar dados online: "+upsertError.message);
+        }
+        gsaSupabaseCarregando=false;
+        originalSet.call(localStorage,"gsa_supabase_online","sim");
+        originalSet.call(localStorage,"gsa_supabase_ultimo_login",new Date().toISOString());
+      }
+      async function gsaSupabaseSair(){
+        try{
+          if(gsaSupabaseClient)await gsaSupabaseClient.auth.signOut();
+          else if(supabaseConfigurado())await obterSupabaseClient().auth.signOut();
+        }catch(e){console.warn("Falha ao sair do Supabase",e)}
+      }
+      window.GSASupabase={
+        configurado:supabaseConfigurado,
+        salvarAgora:salvarMestreNoSupabaseAgora,
+        sair:gsaSupabaseSair,
+        mensagemSupabaseNaoConfigurado
+      };
 
       function enc(txt){try{return btoa(unescape(encodeURIComponent(String(txt||""))))}catch(e){return String(txt||"")}}
       function dec(txt){try{return decodeURIComponent(escape(atob(String(txt||""))))}catch(e){return String(txt||"")}}
@@ -267,6 +433,7 @@
       function setarUsuarioAtivo(usuario){
         const u=normalizarUsuario(usuario);
         if(!u)return;
+        if(ehUsuarioMestre(u))copiarDadosDeTodasAsFontesParaMestre(false);
         sessionStorage.setItem(AUTH_SESSION_KEY,u);
         originalSet.call(localStorage,ACTIVE_USER_KEY,u);
       }
@@ -301,26 +468,82 @@
         });
       }
       function copiarDadosDeTodasAsFontesParaMestre(sobrescrever){
-        const destinoPrefixo="gsa_user_master__";
+        // Usuário mestre: junta todos os dados antigos encontrados neste aparelho
+        // em uma única base mestre. Isso evita que admin25/admin26 entre zerado
+        // quando já existiam dados salvos antes no navegador.
+        const destinoPrefixo=prefixoUsuario(MASTER_USER);
         const users=getUsers();
+        const ARRAY_KEYS=new Set(["clientes_gsa","planos_gsa","apps_gsa","produtos_gsa","contatos_gsa","pagamentos_gsa","movimentacoes_gsa"]);
+        const OBJECT_KEYS=new Set(["config_gsa","telegram_gsa_config"]);
+
+        function parseJSONSeguro(valor, fallback){
+          try{return JSON.parse(valor)}catch(e){return fallback}
+        }
+        function chaveUnicaItem(item){
+          if(!item||typeof item!=="object")return "";
+          return String(item.id||item.telefone||item.nome||item.clienteId||item.descricao||JSON.stringify(item));
+        }
+        function mesclarArrays(valores){
+          const mapa=new Map();
+          valores.forEach(v=>{
+            const arr=parseJSONSeguro(v,[]);
+            if(!Array.isArray(arr))return;
+            arr.forEach(item=>{
+              const chave=chaveUnicaItem(item)||("item_"+mapa.size);
+              if(!mapa.has(chave))mapa.set(chave,item);
+              else if(item&&typeof item==="object")mapa.set(chave,{...mapa.get(chave),...item});
+            });
+          });
+          return Array.from(mapa.values());
+        }
+        function mesclarObjetos(valores){
+          const obj={};
+          valores.forEach(v=>{
+            const item=parseJSONSeguro(v,{});
+            if(item&&typeof item==="object"&&!Array.isArray(item))Object.assign(obj,item);
+          });
+          return obj;
+        }
+        function valorTextoPrincipal(valores){
+          const atual=valores[0];
+          if(!valorLocalVazio(atual))return atual;
+          return valores.find(v=>!valorLocalVazio(v))||"";
+        }
+
         DATA_KEYS.forEach(k=>{
           const destinoKey=destinoPrefixo+k;
-          const destinoValor=originalGet.call(localStorage,destinoKey);
-          if(!sobrescrever && !valorLocalVazio(destinoValor))return;
-          let melhor=null;
           const candidatos=[];
-          candidatos.push(k);
+          candidatos.push(destinoKey); // mantém o que já está no mestre como prioridade
+          candidatos.push(k); // dados antigos sem separação por usuário
           candidatos.push("gsa_sem_login__"+k);
           users.forEach(u=>{
             const identificador=(u&&u.uid)?u.uid:normalizarUsuario(u&&u.usuario).toLowerCase();
             candidatos.push("gsa_user_"+encodeURIComponent(identificador)+"__"+k);
           });
-          for(const chave of candidatos){
-            if(chave===destinoKey)continue;
+
+          const valores=[];
+          const vistas=new Set();
+          candidatos.forEach(chave=>{
+            if(vistas.has(chave))return;
+            vistas.add(chave);
             const valor=originalGet.call(localStorage,chave);
-            if(valor!==null && !valorLocalVazio(valor)){melhor=valor;break;}
+            if(valor!==null&&!valorLocalVazio(valor))valores.push(valor);
+          });
+          if(!valores.length)return;
+
+          const destinoValor=originalGet.call(localStorage,destinoKey);
+          if(!sobrescrever && !valorLocalVazio(destinoValor) && !ARRAY_KEYS.has(k) && !OBJECT_KEYS.has(k))return;
+
+          if(ARRAY_KEYS.has(k)){
+            const arr=mesclarArrays(valores);
+            originalSet.call(localStorage,destinoKey,JSON.stringify(arr));
+          }else if(OBJECT_KEYS.has(k)){
+            const obj=mesclarObjetos(valores);
+            originalSet.call(localStorage,destinoKey,JSON.stringify(obj));
+          }else{
+            const texto=valorTextoPrincipal(valores);
+            if(!valorLocalVazio(texto))originalSet.call(localStorage,destinoKey,String(texto));
           }
-          if(melhor!==null)originalSet.call(localStorage,destinoKey,melhor);
         });
       }
       function zerarDadosDoAdminPadraoUmaVez(){
@@ -369,10 +592,7 @@
         setUsers(users);
         copiarDadosDeTodasAsFontesParaMestre(false);
         zerarDadosDoAdminPadraoUmaVez();
-        if(!usuarioAtual()){
-          salvarLoginLocal(DEFAULT_USER,DEFAULT_PASS);
-          setarUsuarioAtivo(DEFAULT_USER);
-        }
+
       }
       function resetarUsuariosAntigosUmaVez(){
         // Garante os dois acessos: mestre com todos os dados e admin limpo.
@@ -405,8 +625,16 @@
         return key;
       }
       Storage.prototype.getItem=function(key){return originalGet.call(this,chaveEscopada(key));};
-      Storage.prototype.setItem=function(key,value){return originalSet.call(this,chaveEscopada(key),value);};
-      Storage.prototype.removeItem=function(key){return originalRemove.call(this,chaveEscopada(key));};
+      Storage.prototype.setItem=function(key,value){
+        const retorno=originalSet.call(this,chaveEscopada(key),value);
+        if(DATA_SET.has(String(key||"")) && ehUsuarioMestre(usuarioAtual()))agendarSyncSupabase();
+        return retorno;
+      };
+      Storage.prototype.removeItem=function(key){
+        const retorno=originalRemove.call(this,chaveEscopada(key));
+        if(DATA_SET.has(String(key||"")) && ehUsuarioMestre(usuarioAtual()))agendarSyncSupabase();
+        return retorno;
+      };
 
       function getUsers(){
         let raw=originalGet.call(localStorage,AUTH_USERS_KEY);
@@ -577,13 +805,25 @@
         const msg=document.getElementById("authMsg");if(msg){msg.className="auth-msg";msg.textContent="";}
       };
 
-      window.gsaEntrar=function(){
+      window.gsaEntrar=async function(){
         const usuario=normalizarUsuario(document.getElementById("loginUsuario")?.value);
         const senha=(document.getElementById("loginSenha")?.value||"").trim();
         if(!usuario||!senha){authMsg("Digite usuário e senha.");return;}
         const u=acharUsuario(usuario);
         if(!u||dec(u.senha)!==senha){authMsg("Usuário ou senha incorretos.");return;}
-        if(ehUsuarioMestre(u.usuario))copiarDadosDeTodasAsFontesParaMestre(false);
+
+        if(ehUsuarioMestre(u.usuario)){
+          try{
+            authMsg("Conectando ao banco online Supabase...","ok");
+            copiarDadosDeTodasAsFontesParaMestre(false);
+            await gsaSupabaseLoginECarregar(senha);
+          }catch(erro){
+            console.error(erro);
+            authMsg(String(erro&&erro.message?erro.message:erro));
+            return;
+          }
+        }
+
         setarUsuarioAtivo(u.usuario);
         const lembrar=document.getElementById("lembrarAcesso")?.checked;
         if(lembrar)salvarLoginLocal(u.usuario,senha);
@@ -746,7 +986,7 @@ Guarde essas informações com segurança.`;
         <input id="loginUsuario" autocomplete="username" value="admin" placeholder="Digite seu usuário" onkeydown="if(event.key==='Enter')document.getElementById('loginSenha').focus()">
         <label>Senha</label>
         <input id="loginSenha" type="password" autocomplete="current-password" value="admin" placeholder="Digite sua senha" onkeydown="if(event.key==='Enter')gsaEntrar()">
-        <label class="remember-access"><input type="checkbox" id="lembrarAcesso" checked> Salvar usuário e senha neste navegador</label>
+        <label class="remember-access"><input type="checkbox" id="lembrarAcesso"> Salvar usuário e senha neste navegador</label>
         <button class="btn btn-gold" style="width:100%;margin-top:6px" onclick="gsaEntrar()">Entrar no App</button>
       </div>
 
@@ -3672,6 +3912,7 @@ ${secoes.join("")}
       if(!confirmar)return false;
 
       try{
+        if(window.GSASupabase&&GSASupabase.sair)GSASupabase.sair();
         if(window.GSAAuth&&GSAAuth.originalRemove){
           GSAAuth.originalRemove.call(localStorage,"gsa_auth_saved_login_v1");
           GSAAuth.originalRemove.call(localStorage,"gsa_auth_active_user_v1");
@@ -4363,6 +4604,7 @@ ${secoes.join("")}
 
       window.sairDoApp=function(){
         if(!confirm("Deseja realmente sair do sistema?"))return false;
+        try{if(window.GSASupabase&&GSASupabase.sair)GSASupabase.sair();}catch(e){}
         limparSessaoGSA();
         document.body.classList.remove("auth-open");
         document.body.classList.add("auth-locked");
