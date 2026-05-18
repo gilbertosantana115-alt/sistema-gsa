@@ -81,6 +81,49 @@
     .overlay.active{display:block}
 
 
+    /* CLIENTES CADASTRADOS - MODELO EM CARTÕES */
+    .clientes-table-box{padding:0;overflow:hidden;background:#18183a;border:1px solid rgba(0,255,180,.18)}
+    .clientes-table-head{padding:22px 22px 0}
+    .clientes-table-head h2{margin-bottom:12px}
+    .clientes-toolbar{display:grid;grid-template-columns:minmax(260px,1fr) auto auto auto 110px;gap:10px;align-items:center;padding:0 22px 16px}
+    .clientes-toolbar input,.clientes-toolbar select{margin-bottom:0}
+    .clientes-count{background:#11112a;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:11px 12px;color:#cfd0dc;font-size:13px;white-space:nowrap}
+    .clientes-capacity{background:rgba(244,196,0,.08);border:1px solid rgba(244,196,0,.25);border-radius:10px;padding:11px 12px;color:#f4c400;font-size:13px;white-space:nowrap;font-weight:900}
+    .clientes-limit-label{color:#cfd0dc;font-size:13px;white-space:nowrap;text-align:right}
+    .clientes-card-wrap{border-top:1px solid rgba(255,255,255,.08);background:#10102a;padding:18px 22px 8px}
+    .clientes-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+    .cliente-card{background:linear-gradient(180deg,#0f1226 0%,#0b0d1d 100%);border:1px solid rgba(0,255,180,.65);border-radius:8px;padding:14px;box-shadow:0 12px 28px rgba(0,0,0,.25)}
+    .cliente-card-id{color:#0d7cff;font-size:13px;font-weight:800;margin-bottom:8px;word-break:break-word}
+    .cliente-card-title{color:#fff;font-size:18px;font-weight:900;line-height:1.2;margin-bottom:4px}
+    .cliente-card-line{color:#8e95bc;font-size:13px;line-height:1.4;word-break:break-word}
+    .cliente-card-box{border:1px dashed rgba(255,255,255,.16);border-radius:8px;padding:12px;margin-top:12px;background:rgba(255,255,255,.015)}
+    .cliente-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .cliente-card-meta strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
+    .cliente-card-meta span{display:block;color:#8e95bc;font-size:12px;line-height:1.35}
+    .cliente-card-pills{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    .cliente-pill{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:4px;border:1px solid rgba(255,255,255,.16);font-size:14px;font-weight:800;padding:8px 10px;text-align:center}
+    .cliente-pill.status-ativo{border-color:#00f59a;color:#00f59a;background:rgba(0,245,154,.06)}
+    .cliente-pill.status-vencido{border-color:#ff5c7c;color:#ff5c7c;background:rgba(255,92,124,.08)}
+    .cliente-pill.status-alerta{border-color:#f4c400;color:#f4c400;background:rgba(244,196,0,.08)}
+    .cliente-pill.info-purple{border-color:#9b5cff;color:#b06cff;background:rgba(155,92,255,.08)}
+    .cliente-pill.info-blue{border-color:#0d7cff;color:#5ca7ff;background:rgba(13,124,255,.08)}
+    .cliente-card-resumo{color:#fff;font-size:13px;line-height:1.6}
+    .cliente-card-resumo b{color:#fff}
+    .cliente-card-payment{margin-top:12px;width:100%;border:none;border-radius:4px;padding:11px 12px;background:#00b870;color:#fff;font-weight:900;cursor:pointer;transition:.18s ease}
+    .cliente-card-payment:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .clientes-actions{display:grid;grid-template-columns:repeat(4,minmax(56px,1fr));gap:16px;align-items:start;justify-content:center;margin-top:2px}
+    .cliente-action-btn{border:none;background:transparent;color:#cfd0dc;cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:10px;font-weight:700;line-height:1.1;transition:.18s ease}
+    .cliente-action-btn:hover{transform:translateY(-2px);color:#fff;opacity:.96}
+    .cliente-action-btn .ico{width:46px;height:46px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;box-shadow:0 8px 18px rgba(0,0,0,.20)}
+    .cliente-action-btn small{display:block;color:#8e95bc;font-size:10px;max-width:84px;text-align:center;word-break:normal;line-height:1.2}
+    .cliente-action-btn:hover small{color:#fff}
+    .cliente-action-btn.gray .ico{background:#5c6074}.cliente-action-btn.blue .ico{background:#0d7cff}.cliente-action-btn.gold .ico{background:#d5b308;color:#fff}.cliente-action-btn.green .ico{background:#00a859}.cliente-action-btn.purple .ico{background:#7c3aed}.cliente-action-btn.red .ico{background:#ef2f68}.cliente-action-btn.dark .ico{background:#34345e}.cliente-action-btn.cyan .ico{background:#0891b2}
+    .clientes-empty-card{grid-column:1/-1;text-align:center;color:#cfd0dc;padding:28px 16px;border:1px dashed rgba(255,255,255,.18);border-radius:10px;background:rgba(255,255,255,.02)}
+    #paginacaoClientes{padding:0 22px 18px}
+    @media(max-width:900px){.clientes-table-head{padding:16px 16px 0}.clientes-toolbar{grid-template-columns:1fr;gap:8px;padding:0 16px 14px}.clientes-count,.clientes-capacity,.clientes-limit-label{width:100%;text-align:left}.clientes-card-wrap{padding:16px 16px 8px}.clientes-actions{grid-template-columns:repeat(3,minmax(56px,1fr));gap:14px}.cliente-action-btn .ico{width:42px;height:42px}#paginacaoClientes{padding:0 16px 16px}}
+    @media(max-width:520px){.clientes-card-grid{grid-template-columns:1fr}.cliente-card{padding:12px}.cliente-card-title{font-size:16px}.cliente-card-meta,.cliente-card-pills{grid-template-columns:1fr 1fr}.clientes-actions{grid-template-columns:repeat(2,minmax(56px,1fr));gap:12px}.cliente-action-btn small{max-width:100px}}
+
+
     /* DASHBOARD MODELO AVANÇADO */
     .dash-page{display:block}
     .dash-small-title{color:#93a4d8;font-weight:800;font-size:15px;margin:0 0 22px 0}
@@ -1373,30 +1416,28 @@ Guarde essas informações com segurança.`;
           <button class="btn btn-gold" onclick="salvarCliente()">Salvar Cliente</button>
         </div>
 
-        <div class="box">
-          <h2>Clientes Cadastrados</h2>
-          <div class="info-box">
-            O link de pagamento fica ativo no botão <strong>Abrir Pagamento</strong>.
-            Se colar sem https://, o sistema tenta abrir automaticamente com https://.<br>
-            <strong>Capacidade:</strong> até <strong>20000 clientes cadastrados</strong> com busca e paginação.
+        <div class="box clientes-table-box">
+          <div class="clientes-table-head">
+            <h2>Clientes Cadastrados</h2>
+            <div class="info-box">
+              Clientes organizados neste <strong>modelo visual em cartão</strong>, mantendo os botões originais de ação.
+              <br><strong>Capacidade:</strong> até <strong>20000 clientes cadastrados</strong>.
+            </div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-            <input id="buscaCliente" placeholder="Buscar cliente por nome, telefone, plano, app, produto, dispositivo, servidor, observações, link ou status" oninput="paginaAtualClientes=1;atualizarTela()" style="flex:1;min-width:260px;margin-bottom:0;">
-            <span id="contadorClientesFiltrados" style="color:#cfd0dc;font-size:13px;white-space:nowrap;">0 selecionado(s)</span>
-            <span id="capacidadeClientes" style="color:#f4c400;font-size:13px;white-space:nowrap;font-weight:bold;">0/20000 clientes</span>
-            <label for="limiteExibirClientes" style="color:#cfd0dc;font-size:13px;margin-left:auto;white-space:nowrap;">Exibir:</label>
-            <select id="limiteExibirClientes" onchange="alterarLimiteClientes()" style="width:105px;margin-bottom:0;">
+          <div class="clientes-toolbar">
+            <input id="buscaCliente" placeholder="Buscar cliente por nome, telefone, plano, app, produto, dispositivo, observações, link ou status" oninput="paginaAtualClientes=1;atualizarTela()">
+            <span id="contadorClientesFiltrados" class="clientes-count">0 selecionado(s)</span>
+            <span id="capacidadeClientes" class="clientes-capacity">0/20000 clientes</span>
+            <label for="limiteExibirClientes" class="clientes-limit-label">Exibir:</label>
+            <select id="limiteExibirClientes" onchange="alterarLimiteClientes()">
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>
             </select>
           </div>
-          <div class="table-responsive">
-            <table>
-              <thead><tr><th>Nome</th><th>Plano</th><th>App</th><th>Produto</th><th>Dispositivo</th><th>Servidor</th><th>MAC / E-mail</th><th>Key / OTP</th><th>Valor</th><th>Vencimento</th><th>Link de Pagamento</th><th>Observações</th><th>Status</th><th>Ações</th></tr></thead>
-              <tbody id="listaClientes"></tbody>
-            </table>
+          <div class="clientes-card-wrap">
+            <div id="listaClientes" class="clientes-card-grid"></div>
           </div>
           <div id="paginacaoClientes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;color:#cfd0dc;font-size:13px;"></div>
         </div>
@@ -4454,36 +4495,67 @@ ${secoes.join("")}
       }
 
       if(clientesFiltrados.length===0){
-        listaClientes.innerHTML=`<tr><td colspan="14">Nenhum cliente encontrado.</td></tr>`;
+        listaClientes.innerHTML=`<div class="clientes-empty-card">Nenhum cliente encontrado.</div>`;
       }else{
         clientesParaExibir.forEach(c=>{
           const st=statusCliente(c.vencimento);
-          listaClientes.innerHTML+=`<tr>
-            <td>${c.nome}</td>
-            <td>${c.plano||""}</td>
-            <td>${c.app||""}</td>
-            <td>${c.produto||""}</td>
-            <td>${c.dispositivo||""}</td>
-            <td>${c.servidor||""}</td>
-            <td>${c.macEmail||""}</td>
-            <td>${c.keyOtp||""}</td>
-            <td>${formatarDinheiro(c.valor)}</td>
-            <td>${formatarData(c.vencimento)}</td>
-            <td>${botaoLinkPagamentoAtivo(c.id,obterLinkPagamentoCliente(c))}</td>
-            <td style="max-width:260px;white-space:pre-wrap;line-height:1.4;color:#cfd0dc;">${escaparHtml(c.observacoes||c.observacao||c.obs||"")}</td>
-            <td><span class="badge ${st.classe}">${st.texto}</span></td>
-            <td>
-              <div class="actions">
-                <button class="btn btn-blue" onclick="editarCliente('${c.id}')">Editar</button>
-                <button class="btn btn-green" onclick="renovarCliente('${c.id}')">Renovar</button>
-                <button class="btn btn-gold" onclick="enviarConfirmacaoRenovacao('${c.id}')">Confirmação</button>
-                <button class="btn btn-gold" onclick="abrirLinkPagamento('${c.id}')">Pagamento</button>
-                <button class="btn btn-green" onclick="enviarWhatsApp('${c.id}')">WhatsApp</button>
-                ${clienteEstaArquivado(c)?`<button class="btn btn-dark" onclick="desarquivarCliente('${c.id}')">Desarquivar</button>`:`<button class="btn btn-dark" onclick="arquivarCliente('${c.id}')">Arquivar</button>`}
-                <button class="btn btn-red" onclick="excluirCliente('${c.id}')">Excluir</button>
+          const statusClasse=st.texto==="Ativo"?"status-ativo":(st.texto==="Vencido"?"status-vencido":"status-alerta");
+          const etiquetaSecundaria=escaparHtml(c.app||c.produto||c.plano||"Sem categoria");
+          const observacoes=escaparHtml(c.observacoes||c.observacao||c.obs||"Sem observações cadastradas");
+          const infoTopo1=escaparHtml(c.plano||"Plano não informado");
+          const infoTopo2=escaparHtml(c.produto||c.app||"Produto não informado");
+          const servidor=escaparHtml(c.servidor||"Servidor não informado");
+          const dispositivo=escaparHtml(c.dispositivo||"Dispositivo não informado");
+          const codigo=escaparHtml(c.codigo||c.id||"-");
+          const criadoEm=escaparHtml(formatarDataHoraBR(c.criadoEm||""));
+          const macEmail=escaparHtml(c.macEmail||"Não informado");
+          const keyOtp=escaparHtml(c.keyOtp||"Não informado");
+          const telefone=escaparHtml(c.telefone||"Não informado");
+          listaClientes.innerHTML+=`<div class="cliente-card">
+            <div class="cliente-card-id">${codigo}</div>
+            <div class="cliente-card-title">${escaparHtml(c.nome||"")}</div>
+            <div class="cliente-card-line">${infoTopo1}</div>
+            <div class="cliente-card-line">${infoTopo2}</div>
+            <div class="cliente-card-line">${servidor}</div>
+
+            <div class="cliente-card-box cliente-card-meta">
+              <div>
+                <strong>Vencimento</strong>
+                <span>${escaparHtml(formatarData(c.vencimento))}</span>
               </div>
-            </td>
-          </tr>`;
+              <div>
+                <strong>Criado em</strong>
+                <span>${criadoEm||"Não informado"}</span>
+              </div>
+            </div>
+
+            <div class="cliente-card-pills">
+              <div class="cliente-pill ${statusClasse}">${escaparHtml(st.texto)}</div>
+              <div class="cliente-pill ${(c.app||c.produto)?"info-purple":"info-blue"}">${etiquetaSecundaria}</div>
+            </div>
+
+            <div class="cliente-card-box">
+              <div class="cliente-card-resumo"><b>Dispositivo:</b> ${dispositivo}</div>
+              <div class="cliente-card-resumo"><b>Plano:</b> ${formatarDinheiro(c.valor)}</div>
+              <div class="cliente-card-resumo"><b>Telefone:</b> ${telefone}</div>
+              <div class="cliente-card-resumo"><b>MAC / E-mail:</b> ${macEmail}</div>
+              <div class="cliente-card-resumo"><b>Key / OTP:</b> ${keyOtp}</div>
+              <div class="cliente-card-resumo"><b>Obs:</b> ${observacoes}</div>
+              <button type="button" class="cliente-card-payment" onclick="abrirLinkPagamento('${c.id}')">Abrir Pagamento</button>
+            </div>
+
+            <div class="cliente-card-box">
+              <div class="actions clientes-actions">
+                <button type="button" class="cliente-action-btn gray" onclick="editarCliente('${c.id}')"><span class="ico">✎</span><small>Editar</small></button>
+                <button type="button" class="cliente-action-btn gold" onclick="renovarCliente('${c.id}')"><span class="ico">✚</span><small>Renovar</small></button>
+                <button type="button" class="cliente-action-btn gold" onclick="enviarConfirmacaoRenovacao('${c.id}')"><span class="ico">☑</span><small>Renovar com Confirmação</small></button>
+                <button type="button" class="cliente-action-btn blue" onclick="abrirLinkPagamento('${c.id}')"><span class="ico">▣</span><small>Pagamento</small></button>
+                <button type="button" class="cliente-action-btn green" onclick="enviarWhatsApp('${c.id}')"><span class="ico">☷</span><small>Lembrete de Renovação</small></button>
+                ${clienteEstaArquivado(c)?`<button type="button" class="cliente-action-btn dark" onclick="desarquivarCliente('${c.id}')"><span class="ico">↻</span><small>Desarquivar</small></button>`:`<button type="button" class="cliente-action-btn purple" onclick="arquivarCliente('${c.id}')"><span class="ico">▰</span><small>Arquivar</small></button>`}
+                <button type="button" class="cliente-action-btn red" onclick="excluirCliente('${c.id}')"><span class="ico">🗑</span><small>Excluir</small></button>
+              </div>
+            </div>
+          </div>`;
         });
       }
 
