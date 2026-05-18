@@ -123,6 +123,19 @@
     @media(max-width:900px){.clientes-table-head{padding:16px 16px 0}.clientes-toolbar{grid-template-columns:1fr;gap:8px;padding:0 16px 14px}.clientes-count,.clientes-capacity,.clientes-limit-label{width:100%;text-align:left}.clientes-card-wrap{padding:16px 16px 8px}.clientes-actions{grid-template-columns:repeat(3,minmax(56px,1fr));gap:14px}.cliente-action-btn .ico{width:42px;height:42px}#paginacaoClientes{padding:0 16px 16px}}
     @media(max-width:520px){.clientes-card-grid{grid-template-columns:1fr}.cliente-card{padding:12px}.cliente-card-title{font-size:16px}.cliente-card-meta,.cliente-card-pills{grid-template-columns:1fr 1fr}.clientes-actions{grid-template-columns:repeat(2,minmax(56px,1fr));gap:12px}.cliente-action-btn small{max-width:100px}}
 
+    .clientes-filtros{display:flex;gap:8px;flex-wrap:wrap;padding:0 22px 14px}
+    .clientes-filtro-btn{border:1px solid rgba(255,255,255,.12);background:#11112a;color:#cfd0dc;border-radius:999px;padding:9px 13px;font-size:12px;font-weight:900;cursor:pointer;transition:.18s ease;display:flex;align-items:center;gap:7px}
+    .clientes-filtro-btn:hover{border-color:#f4c400;color:#fff;transform:translateY(-1px)}
+    .clientes-filtro-btn.active{background:#f4c400;color:#000;border-color:#f4c400;box-shadow:0 0 18px rgba(244,196,0,.18)}
+    .clientes-filtro-btn span{min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:rgba(255,255,255,.10);display:inline-flex;align-items:center;justify-content:center;font-size:11px}
+    .clientes-filtro-btn.active span{background:rgba(0,0,0,.14)}
+    .clientes-arquivados-box{border-top:1px solid rgba(255,255,255,.08);background:#11112a;padding:18px 22px 22px}
+    .clientes-arquivados-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .clientes-arquivados-head h3{color:#f4c400;font-size:20px;margin:0;font-weight:900}
+    .cliente-card-arquivado{border-color:rgba(142,149,188,.55);opacity:.90}
+    .cliente-card-archive-label{display:inline-flex;align-items:center;justify-content:center;margin:0 0 9px 0;padding:5px 10px;border-radius:999px;background:rgba(142,149,188,.14);border:1px solid rgba(142,149,188,.32);color:#cfd0dc;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.45px}
+    @media(max-width:900px){.clientes-filtros{padding:0 16px 14px}.clientes-filtro-btn{width:100%;justify-content:space-between}.clientes-arquivados-box{padding:16px}}
+
 
     /* DASHBOARD MODELO AVANÇADO */
     .dash-page{display:block}
@@ -1436,10 +1449,28 @@ Guarde essas informações com segurança.`;
               <option value="100">100</option>
             </select>
           </div>
+          <div class="clientes-filtros">
+            <button type="button" class="clientes-filtro-btn active" data-filtro-clientes="todos" onclick="setFiltroClientesCadastro('todos')">Todos <span id="qtdClientesTodos">0</span></button>
+            <button type="button" class="clientes-filtro-btn" data-filtro-clientes="em-dia" onclick="setFiltroClientesCadastro('em-dia')">Cliente em dia <span id="qtdClientesEmDia">0</span></button>
+            <button type="button" class="clientes-filtro-btn" data-filtro-clientes="vence-hoje" onclick="setFiltroClientesCadastro('vence-hoje')">Vence hoje <span id="qtdClientesVenceHoje">0</span></button>
+            <button type="button" class="clientes-filtro-btn" data-filtro-clientes="proximo-vencer" onclick="setFiltroClientesCadastro('proximo-vencer')">Próximo de vencer <span id="qtdClientesProximoVencer">0</span></button>
+            <button type="button" class="clientes-filtro-btn" data-filtro-clientes="vencidos" onclick="setFiltroClientesCadastro('vencidos')">Vencidos <span id="qtdClientesVencidosLista">0</span></button>
+          </div>
           <div class="clientes-card-wrap">
             <div id="listaClientes" class="clientes-card-grid"></div>
           </div>
           <div id="paginacaoClientes" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;color:#cfd0dc;font-size:13px;"></div>
+
+          <div class="clientes-arquivados-box">
+            <div class="clientes-arquivados-head">
+              <h3>Clientes Arquivados</h3>
+              <span id="contadorClientesArquivados" class="clientes-count">0 arquivado(s)</span>
+            </div>
+            <div class="info-box">
+              Clientes arquivados ficam separados e não aparecem mais em <strong>Clientes Cadastrados</strong>. Use o botão <strong>Desarquivar</strong> para voltar o cliente para a lista principal.
+            </div>
+            <div id="listaClientesArquivados" class="clientes-card-grid"></div>
+          </div>
         </div>
       </section>
 
@@ -3380,6 +3411,176 @@ Atenciosamente,
     body{font-family:Arial,Helvetica,sans-serif;}
     table{mso-displayed-decimal-separator:",";mso-displayed-thousand-separator:".";}
     th,td{padding:6px;vertical-align:top;}
+  
+
+    /* =========================================================
+       CORREÇÃO RESPONSIVA FINAL - PC / TABLET / CELULAR
+       Mantém todas as funções do sistema e ajusta somente o layout.
+    ========================================================= */
+    :root{
+      --gsa-sidebar-pc:270px;
+      --gsa-sidebar-tablet:238px;
+      --gsa-radius:14px;
+      --gsa-page-pad:25px;
+    }
+    html,body{width:100%;max-width:100%;overflow-x:hidden;}
+    img,video,canvas,svg{max-width:100%;height:auto;}
+    input,select,textarea,button{max-width:100%;min-width:0;}
+    .main,.box,.card,.topbar,.dash-mini-card,.dash-chart-card,.backup-card-export,.cliente-card{min-width:0;}
+    .table-responsive{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .table-responsive table{width:100%;}
+    .actions{align-items:center;}
+
+    /* PC e telas grandes */
+    @media (min-width:1201px){
+      .mobile-header{display:none!important;}
+      .sidebar{width:var(--gsa-sidebar-pc);left:0!important;}
+      .main{margin-left:var(--gsa-sidebar-pc);width:calc(100% - var(--gsa-sidebar-pc));padding:25px;}
+      .cards{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+      .clientes-card-grid{grid-template-columns:repeat(auto-fit,minmax(340px,1fr));}
+      .clientes-toolbar{grid-template-columns:minmax(300px,1fr) auto auto auto 110px;}
+      .dash-top-grid{grid-template-columns:repeat(3,1fr);}
+      .dash-mid-grid{grid-template-columns:repeat(3,1fr);}
+      .dash-main-grid{grid-template-columns:1fr 1fr;}
+      .backup-export-grid{grid-template-columns:repeat(4,1fr);}
+    }
+
+    /* Notebook e tablet horizontal */
+    @media (min-width:901px) and (max-width:1200px){
+      .mobile-header{display:none!important;}
+      .sidebar{width:var(--gsa-sidebar-tablet);left:0!important;padding:16px 10px;}
+      .main{margin-left:var(--gsa-sidebar-tablet);width:calc(100% - var(--gsa-sidebar-tablet));padding:18px;}
+      .logo-box img{width:118px;height:118px;}
+      .logo-box h2{font-size:16px;}
+      .menu-item{font-size:12px;padding:10px 9px;}
+      .submenu{padding-left:18px;}
+      .submenu button{font-size:12px;}
+      .topbar{padding:15px;border-radius:var(--gsa-radius);}
+      .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+      .grid-2{grid-template-columns:1fr 1fr;}
+      .grid-3{grid-template-columns:1fr 1fr;}
+      .clientes-toolbar{grid-template-columns:1fr 1fr;gap:10px;}
+      .clientes-limit-label{text-align:left;}
+      .clientes-card-grid{grid-template-columns:repeat(2,minmax(300px,1fr));}
+      .clientes-actions{grid-template-columns:repeat(3,minmax(62px,1fr));}
+      .dash-top-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+      .dash-mid-grid{grid-template-columns:1fr 1fr;gap:12px;}
+      .dash-mid-grid .dash-mini-card:last-child{grid-column:1/-1;}
+      .dash-main-grid{grid-template-columns:1fr;}
+      .backup-export-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+      .telegram-disconnected-panel{grid-template-columns:1fr;}
+      table{min-width:860px;}
+    }
+
+    /* Tablet em pé e celular grande: menu vira gaveta */
+    @media (max-width:900px){
+      body{font-size:14px;background:#0b0b22;}
+      .mobile-header{display:flex!important;position:sticky;top:0;left:0;right:0;z-index:1200;padding:12px 14px;}
+      .mobile-header h2{font-size:clamp(15px,4vw,18px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:58vw;}
+      .hamburger{min-height:42px;min-width:46px;}
+      .app{display:block;min-height:calc(100vh - 60px);}
+      .sidebar{position:fixed;left:-292px;top:0;width:286px;max-width:86vw;height:100vh;z-index:1300;padding:16px 12px;box-shadow:20px 0 45px rgba(0,0,0,.35);}
+      .sidebar.active{left:0;}
+      .overlay.active{display:block!important;z-index:1250;}
+      .main{margin-left:0!important;width:100%!important;padding:14px;padding-bottom:70px;}
+      .logo-box img{width:120px;height:120px;}
+      .logo-actions{display:none;}
+      .topbar{padding:14px;border-radius:var(--gsa-radius);justify-content:center;text-align:center;margin-bottom:16px;}
+      .topbar h1{font-size:20px;width:100%;}
+      .topbar .status{margin:auto;}
+      .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+      .card{padding:16px;border-radius:var(--gsa-radius);}
+      .card h3{font-size:12px;}
+      .card strong{font-size:22px;}
+      .box{padding:16px;border-radius:var(--gsa-radius);margin-bottom:14px;}
+      .box h2{font-size:20px;}
+      .grid-2,.grid-3{grid-template-columns:1fr;gap:8px;}
+      input,select,textarea{font-size:16px;padding:12px;margin-bottom:10px;}
+      .btn{min-height:42px;}
+      .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+      .actions .btn,.actions button{width:100%;margin:0;}
+
+      .clientes-table-box{padding:0;}
+      .clientes-table-head{padding:16px 16px 0;}
+      .clientes-toolbar{grid-template-columns:1fr;gap:8px;padding:0 16px 14px;}
+      .clientes-count,.clientes-capacity,.clientes-limit-label{width:100%;text-align:left;display:block;}
+      .clientes-filtros{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 14px;}
+      .clientes-filtro-btn{width:100%;justify-content:space-between;padding:10px 11px;font-size:11px;}
+      .clientes-card-wrap{padding:16px 16px 8px;}
+      .clientes-card-grid{grid-template-columns:1fr;gap:14px;}
+      .cliente-card{padding:12px;border-radius:8px;}
+      .cliente-card-title{font-size:16px;}
+      .cliente-card-meta,.cliente-card-pills{grid-template-columns:1fr 1fr;gap:8px;}
+      .clientes-actions{grid-template-columns:repeat(3,minmax(58px,1fr));gap:12px;}
+      .cliente-action-btn .ico{width:42px;height:42px;}
+      .cliente-action-btn small{font-size:9px;max-width:72px;}
+      .clientes-arquivados-box{padding:16px;}
+      #paginacaoClientes{padding:0 16px 16px;}
+      #paginacaoClientes>div{width:100%;display:grid!important;grid-template-columns:1fr 1fr;}
+      #paginacaoClientes .btn{width:100%;}
+
+      .dash-top-grid,.dash-mid-grid,.dash-main-grid{grid-template-columns:1fr!important;gap:12px;}
+      .dash-stat-card{min-height:78px;padding:14px;}
+      .dash-stat-card strong{font-size:24px;}
+      .dash-icon{font-size:32px;}
+      .dash-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+      .dash-kpi{padding:11px 8px;}
+      .dash-canvas-wrap{min-height:210px;padding:12px 8px;}
+      .dash-canvas{height:210px!important;}
+      .backup-export-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+      .backup-card-export{min-height:178px;padding:22px 12px;}
+      .telegram-disconnected-panel{grid-template-columns:1fr!important;gap:14px;}
+      .telegram-send-actions{grid-template-columns:1fr!important;}
+      table{min-width:760px;font-size:13px;}
+      th,td{padding:10px 9px;font-size:13px;}
+      .auth-screen{padding:14px;align-items:flex-start;padding-top:clamp(18px,7vh,60px);min-height:100vh;}
+      .auth-card{border-radius:18px;padding:20px;width:min(430px,100%);}
+      .auth-brand h1{font-size:23px;}
+      .auth-tabs button{min-height:40px;}
+    }
+
+    /* Celular */
+    @media (max-width:600px){
+      .main{padding:10px;padding-bottom:76px;}
+      .mobile-header{padding:10px 12px;}
+      .status{font-size:12px;padding:7px 10px;}
+      .cards{grid-template-columns:1fr;}
+      .card{padding:15px;}
+      .box{padding:14px;margin-bottom:14px;}
+      .topbar h1{font-size:18px;}
+      .actions{grid-template-columns:1fr;}
+      .clientes-filtros{grid-template-columns:1fr;}
+      .clientes-card-meta,.cliente-card-pills{grid-template-columns:1fr;}
+      .clientes-actions{grid-template-columns:repeat(2,minmax(56px,1fr));gap:12px;}
+      .cliente-action-btn small{max-width:104px;}
+      .dash-kpis{grid-template-columns:1fr;}
+      .backup-export-grid{grid-template-columns:1fr;}
+      .backup-title{font-size:20px;}
+      .backup-subtitle{font-size:13px;margin-bottom:14px;}
+      .telegram-connected-card{flex-direction:column;align-items:flex-start;}
+      .telegram-stats{flex-direction:column;gap:8px;}
+      .telegram-modal-card,.auth-modal-card{padding:18px;border-radius:16px;}
+      .auth-card{padding:18px;}
+      .auth-brand h1{font-size:22px;}
+      .auth-tabs{grid-template-columns:1fr;gap:5px;padding:5px;}
+      .auth-actions{display:grid;grid-template-columns:1fr;}
+      table{min-width:720px;}
+      th,td{font-size:12px;padding:9px 8px;}
+      #buscaCliente{min-width:100%!important;}
+    }
+
+    /* Celular muito pequeno */
+    @media (max-width:380px){
+      .main{padding:8px;padding-bottom:76px;}
+      .mobile-header h2{max-width:50vw;font-size:15px;}
+      .hamburger{padding:8px 10px;min-width:42px;}
+      .box,.card{padding:12px;}
+      input,select,textarea{font-size:15px;padding:11px;}
+      .auth-card{padding:15px;}
+      .auth-brand h1{font-size:20px;}
+      .backup-card-export{padding:18px 10px;}
+    }
+
   </style>
 </head>
 <body>
@@ -4426,6 +4627,106 @@ ${secoes.join("")}
       atualizarTela();
     }
 
+    let filtroClientesCadastro="todos";
+
+    function setFiltroClientesCadastro(filtro){
+      filtroClientesCadastro=filtro||"todos";
+      paginaAtualClientes=1;
+      atualizarTela();
+    }
+
+    function clientePassaFiltroCadastro(c,filtro){
+      const dias=diffDiasAte(c&&c.vencimento);
+      if(filtro==="em-dia") return dias!==null && dias>3;
+      if(filtro==="vence-hoje") return dias===0;
+      if(filtro==="proximo-vencer") return dias!==null && dias>0 && dias<=3;
+      if(filtro==="vencidos") return dias!==null && dias<0;
+      return true;
+    }
+
+    function atualizarBotoesFiltroClientes(){
+      document.querySelectorAll("[data-filtro-clientes]").forEach(btn=>{
+        btn.classList.toggle("active",btn.dataset.filtroClientes===filtroClientesCadastro);
+      });
+    }
+
+    function atualizarContadoresFiltroClientes(clientesNaoArquivados){
+      const set=(id,valor)=>{const el=document.getElementById(id);if(el)el.innerText=valor;};
+      set("qtdClientesTodos",clientesNaoArquivados.length);
+      set("qtdClientesEmDia",clientesNaoArquivados.filter(c=>clientePassaFiltroCadastro(c,"em-dia")).length);
+      set("qtdClientesVenceHoje",clientesNaoArquivados.filter(c=>clientePassaFiltroCadastro(c,"vence-hoje")).length);
+      set("qtdClientesProximoVencer",clientesNaoArquivados.filter(c=>clientePassaFiltroCadastro(c,"proximo-vencer")).length);
+      set("qtdClientesVencidosLista",clientesNaoArquivados.filter(c=>clientePassaFiltroCadastro(c,"vencidos")).length);
+    }
+
+    function renderizarAcoesClienteHTML(c){
+      const botaoArquivo=clienteEstaArquivado(c)
+        ? `<button type="button" class="cliente-action-btn dark" onclick="desarquivarCliente('${c.id}')"><span class="ico">↻</span><small>Desarquivar</small></button>`
+        : `<button type="button" class="cliente-action-btn purple" onclick="arquivarCliente('${c.id}')"><span class="ico">▰</span><small>Arquivar</small></button>`;
+      return `
+        <button type="button" class="cliente-action-btn gray" onclick="editarCliente('${c.id}')"><span class="ico">✎</span><small>Editar</small></button>
+        <button type="button" class="cliente-action-btn gold" onclick="renovarCliente('${c.id}')"><span class="ico">✚</span><small>Renovar</small></button>
+        <button type="button" class="cliente-action-btn gold" onclick="enviarConfirmacaoRenovacao('${c.id}')"><span class="ico">☑</span><small>Renovar com Confirmação</small></button>
+        <button type="button" class="cliente-action-btn blue" onclick="abrirLinkPagamento('${c.id}')"><span class="ico">▣</span><small>Pagamento</small></button>
+        <button type="button" class="cliente-action-btn green" onclick="enviarWhatsApp('${c.id}')"><span class="ico">☷</span><small>Lembrete de Renovação</small></button>
+        ${botaoArquivo}
+        <button type="button" class="cliente-action-btn red" onclick="excluirCliente('${c.id}')"><span class="ico">🗑</span><small>Excluir</small></button>`;
+    }
+
+    function renderizarCardClienteHTML(c,modoArquivado){
+      const st=statusCliente(c.vencimento);
+      const statusClasse=st.texto==="Ativo"?"status-ativo":(st.texto==="Vencido"?"status-vencido":"status-alerta");
+      const etiquetaSecundaria=escaparHtml(c.app||c.produto||c.plano||"Sem categoria");
+      const observacoes=escaparHtml(c.observacoes||c.observacao||c.obs||"Sem observações cadastradas");
+      const infoTopo1=escaparHtml(c.plano||"Plano não informado");
+      const infoTopo2=escaparHtml(c.produto||c.app||"Produto não informado");
+      const servidor=escaparHtml(c.servidor||"Servidor não informado");
+      const dispositivo=escaparHtml(c.dispositivo||"Dispositivo não informado");
+      const codigo=escaparHtml(c.codigo||c.id||"-");
+      const criadoEm=escaparHtml(formatarDataHoraBR(c.criadoEm||""));
+      const macEmail=escaparHtml(c.macEmail||"Não informado");
+      const keyOtp=escaparHtml(c.keyOtp||"Não informado");
+      const telefone=escaparHtml(c.telefone||"Não informado");
+      return `<div class="cliente-card ${modoArquivado?"cliente-card-arquivado":""}">
+        <div class="cliente-card-id">${codigo}</div>
+        ${modoArquivado?'<div class="cliente-card-archive-label">Arquivado</div>':''}
+        <div class="cliente-card-title">${escaparHtml(c.nome||"")}</div>
+        <div class="cliente-card-line">${infoTopo1}</div>
+        <div class="cliente-card-line">${infoTopo2}</div>
+        <div class="cliente-card-line">${servidor}</div>
+
+        <div class="cliente-card-box cliente-card-meta">
+          <div>
+            <strong>Vencimento</strong>
+            <span>${escaparHtml(formatarData(c.vencimento))}</span>
+          </div>
+          <div>
+            <strong>Criado em</strong>
+            <span>${criadoEm||"Não informado"}</span>
+          </div>
+        </div>
+
+        <div class="cliente-card-pills">
+          <div class="cliente-pill ${statusClasse}">${escaparHtml(st.texto)}</div>
+          <div class="cliente-pill ${(c.app||c.produto)?"info-purple":"info-blue"}">${etiquetaSecundaria}</div>
+        </div>
+
+        <div class="cliente-card-box">
+          <div class="cliente-card-resumo"><b>Dispositivo:</b> ${dispositivo}</div>
+          <div class="cliente-card-resumo"><b>Plano:</b> ${formatarDinheiro(c.valor)}</div>
+          <div class="cliente-card-resumo"><b>Telefone:</b> ${telefone}</div>
+          <div class="cliente-card-resumo"><b>MAC / E-mail:</b> ${macEmail}</div>
+          <div class="cliente-card-resumo"><b>Key / OTP:</b> ${keyOtp}</div>
+          <div class="cliente-card-resumo"><b>Obs:</b> ${observacoes}</div>
+          <button type="button" class="cliente-card-payment" onclick="abrirLinkPagamento('${c.id}')">Abrir Pagamento</button>
+        </div>
+
+        <div class="cliente-card-box">
+          <div class="actions clientes-actions">${renderizarAcoesClienteHTML(c)}</div>
+        </div>
+      </div>`;
+    }
+
     function atualizarTela(){
       if(window.gsaPreencherSeguranca)gsaPreencherSeguranca();
       preencherSelectPlanos();
@@ -4433,13 +4734,19 @@ ${secoes.join("")}
       preencherSelectProdutos();
       preencherSelectLimiteClientes();
       carregarMensagemCobranca();
+      atualizarBotoesFiltroClientes();
 
       const listaClientes=document.getElementById("listaClientes");
+      const listaClientesArquivados=document.getElementById("listaClientesArquivados");
       listaClientes.innerHTML="";
+      if(listaClientesArquivados)listaClientesArquivados.innerHTML="";
       let ativos=0;
       let vencidos=0;
+      const clientesNaoArquivados=clientes.filter(c=>!clienteEstaArquivado(c));
+      const clientesArquivados=clientes.filter(c=>clienteEstaArquivado(c));
+      atualizarContadoresFiltroClientes(clientesNaoArquivados);
 
-      clientes.forEach(c=>{
+      clientesNaoArquivados.forEach(c=>{
         const st=statusCliente(c.vencimento);
         if(st.texto==="Vencido")vencidos++;else ativos++;
       });
@@ -4453,10 +4760,11 @@ ${secoes.join("")}
         limiteSelect.dataset.iniciado="1";
       }
       const limiteExibirClientes=Number(limiteSelect?.value||10);
-      const clientesFiltrados=clientes.filter(c=>{
+      const clientesFiltrados=clientesNaoArquivados.filter(c=>{
         const st=statusCliente(c.vencimento);
-        const texto=[c.nome,c.telefone,c.plano,c.app,c.produto,c.dispositivo,c.servidor,c.observacoes,c.observacao,c.obs,c.macEmail,c.keyOtp,c.valor,formatarData(c.vencimento),st.texto,clienteEstaArquivado(c)?"arquivado":"",obterLinkPagamentoCliente(c)].join(" ").toLowerCase();
-        return !termoBuscaCliente || texto.includes(termoBuscaCliente);
+        const texto=[c.nome,c.telefone,c.plano,c.app,c.produto,c.dispositivo,c.servidor,c.observacoes,c.observacao,c.obs,c.macEmail,c.keyOtp,c.valor,formatarData(c.vencimento),st.texto,obterLinkPagamentoCliente(c)].join(" ").toLowerCase();
+        const passaBusca=!termoBuscaCliente || texto.includes(termoBuscaCliente);
+        return passaBusca && clientePassaFiltroCadastro(c,filtroClientesCadastro);
       }).sort((a,b)=>{
         const da=parseData(a.vencimento)||new Date("9999-12-31T00:00:00");
         const db=parseData(b.vencimento)||new Date("9999-12-31T00:00:00");
@@ -4495,68 +4803,24 @@ ${secoes.join("")}
       }
 
       if(clientesFiltrados.length===0){
-        listaClientes.innerHTML=`<div class="clientes-empty-card">Nenhum cliente encontrado.</div>`;
+        listaClientes.innerHTML=`<div class="clientes-empty-card">Nenhum cliente encontrado neste filtro.</div>`;
       }else{
         clientesParaExibir.forEach(c=>{
-          const st=statusCliente(c.vencimento);
-          const statusClasse=st.texto==="Ativo"?"status-ativo":(st.texto==="Vencido"?"status-vencido":"status-alerta");
-          const etiquetaSecundaria=escaparHtml(c.app||c.produto||c.plano||"Sem categoria");
-          const observacoes=escaparHtml(c.observacoes||c.observacao||c.obs||"Sem observações cadastradas");
-          const infoTopo1=escaparHtml(c.plano||"Plano não informado");
-          const infoTopo2=escaparHtml(c.produto||c.app||"Produto não informado");
-          const servidor=escaparHtml(c.servidor||"Servidor não informado");
-          const dispositivo=escaparHtml(c.dispositivo||"Dispositivo não informado");
-          const codigo=escaparHtml(c.codigo||c.id||"-");
-          const criadoEm=escaparHtml(formatarDataHoraBR(c.criadoEm||""));
-          const macEmail=escaparHtml(c.macEmail||"Não informado");
-          const keyOtp=escaparHtml(c.keyOtp||"Não informado");
-          const telefone=escaparHtml(c.telefone||"Não informado");
-          listaClientes.innerHTML+=`<div class="cliente-card">
-            <div class="cliente-card-id">${codigo}</div>
-            <div class="cliente-card-title">${escaparHtml(c.nome||"")}</div>
-            <div class="cliente-card-line">${infoTopo1}</div>
-            <div class="cliente-card-line">${infoTopo2}</div>
-            <div class="cliente-card-line">${servidor}</div>
-
-            <div class="cliente-card-box cliente-card-meta">
-              <div>
-                <strong>Vencimento</strong>
-                <span>${escaparHtml(formatarData(c.vencimento))}</span>
-              </div>
-              <div>
-                <strong>Criado em</strong>
-                <span>${criadoEm||"Não informado"}</span>
-              </div>
-            </div>
-
-            <div class="cliente-card-pills">
-              <div class="cliente-pill ${statusClasse}">${escaparHtml(st.texto)}</div>
-              <div class="cliente-pill ${(c.app||c.produto)?"info-purple":"info-blue"}">${etiquetaSecundaria}</div>
-            </div>
-
-            <div class="cliente-card-box">
-              <div class="cliente-card-resumo"><b>Dispositivo:</b> ${dispositivo}</div>
-              <div class="cliente-card-resumo"><b>Plano:</b> ${formatarDinheiro(c.valor)}</div>
-              <div class="cliente-card-resumo"><b>Telefone:</b> ${telefone}</div>
-              <div class="cliente-card-resumo"><b>MAC / E-mail:</b> ${macEmail}</div>
-              <div class="cliente-card-resumo"><b>Key / OTP:</b> ${keyOtp}</div>
-              <div class="cliente-card-resumo"><b>Obs:</b> ${observacoes}</div>
-              <button type="button" class="cliente-card-payment" onclick="abrirLinkPagamento('${c.id}')">Abrir Pagamento</button>
-            </div>
-
-            <div class="cliente-card-box">
-              <div class="actions clientes-actions">
-                <button type="button" class="cliente-action-btn gray" onclick="editarCliente('${c.id}')"><span class="ico">✎</span><small>Editar</small></button>
-                <button type="button" class="cliente-action-btn gold" onclick="renovarCliente('${c.id}')"><span class="ico">✚</span><small>Renovar</small></button>
-                <button type="button" class="cliente-action-btn gold" onclick="enviarConfirmacaoRenovacao('${c.id}')"><span class="ico">☑</span><small>Renovar com Confirmação</small></button>
-                <button type="button" class="cliente-action-btn blue" onclick="abrirLinkPagamento('${c.id}')"><span class="ico">▣</span><small>Pagamento</small></button>
-                <button type="button" class="cliente-action-btn green" onclick="enviarWhatsApp('${c.id}')"><span class="ico">☷</span><small>Lembrete de Renovação</small></button>
-                ${clienteEstaArquivado(c)?`<button type="button" class="cliente-action-btn dark" onclick="desarquivarCliente('${c.id}')"><span class="ico">↻</span><small>Desarquivar</small></button>`:`<button type="button" class="cliente-action-btn purple" onclick="arquivarCliente('${c.id}')"><span class="ico">▰</span><small>Arquivar</small></button>`}
-                <button type="button" class="cliente-action-btn red" onclick="excluirCliente('${c.id}')"><span class="ico">🗑</span><small>Excluir</small></button>
-              </div>
-            </div>
-          </div>`;
+          listaClientes.innerHTML+=renderizarCardClienteHTML(c,false);
         });
+      }
+
+      if(listaClientesArquivados){
+        const contadorArquivados=document.getElementById("contadorClientesArquivados");
+        if(contadorArquivados)contadorArquivados.innerText=`${clientesArquivados.length} arquivado(s)`;
+        if(clientesArquivados.length===0){
+          listaClientesArquivados.innerHTML=`<div class="clientes-empty-card">Nenhum cliente arquivado.</div>`;
+        }else{
+          clientesArquivados
+            .slice()
+            .sort((a,b)=>String(a.nome||"").localeCompare(String(b.nome||""),"pt-BR"))
+            .forEach(c=>{listaClientesArquivados.innerHTML+=renderizarCardClienteHTML(c,true);});
+        }
       }
 
       document.getElementById("totalClientes").innerText=clientes.length;
